@@ -1,23 +1,25 @@
+async function handleSubmit(msg, sendResponse) {
+  console.log("Picture submit message received.");
+  try {
+    // make sure the request is full
+    console.assert(msg.picURL && msg.isSpecial3x3 != null, "One or more parameters absent in message JSON");
+    
+    const encoded_url = encodeURIComponent(msg.picURL); // encode the picture URL so there are no symbols like &=/?:
+    console.log("Fetching response...");
+    const response = await fetch(`https://127.0.0.1:5000/submit_picture?picURL=${encoded_url}&isSpecial3x3=${msg.isSpecial3x3}`);
+    
+    console.log("Sending response...");
+    sendResponse(await response.json());
+  } catch(e) {
+    console.error(e.toString());
+    sendResponse({error: "Extension backend error!"})
+  }
+}
+
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   console.log("Received message", msg);
-  if (msg.type != "PING_SERVER") {
-    console.log("Message type mismatch!")
-    return true;
-  }
-  
-  fetch("https://127.0.0.1:5000/scripts/test.js")
-    .then(r => {
-      console.log("Fetch response", r);
-      return r.json();
-    })
-    .then(data => {
-      console.log("Data", data);
-      sendResponse(data);
-    })
-    .catch(err => {
-      console.error("Fetch failed", err);
-      sendResponse({ error: err.toString() });
-    });
+  if (msg.type === "SUBMIT_PICTURE")
+    handleSubmit(msg, sendResponse);
 
   return true; // required for async response
 });
