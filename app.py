@@ -3,7 +3,7 @@ import os
 import requests
 from dotenv import load_dotenv
 from processPicture import processPicture
-from enableCORS import cors_enabled
+
 
 load_dotenv()
 
@@ -62,22 +62,7 @@ def submit():
     return render_template("success.html", result=result)
 
 
-@app.route("/scripts/<string:script_name>", methods=["GET"])
-@cors_enabled
-def getScript(script_name: str):
-    """ Used to load injectable snippets from server """
-    
-    # Process the inexistent script case
-    if not os.path.exists(f"scripts/{script_name}"):
-        return f"alert(\"The matching script file was not found for scripts/{script_name}.\");"
-
-    with open(f"scripts/{script_name}", "r", encoding="utf-8") as scriptFile:
-        print(script_name)
-        return scriptFile.read()
-
-
 @app.route("/submit_picture", methods=["GET"])
-@cors_enabled
 def submit_picture():
     """
     Used to submit the picture extracted by the injected script.
@@ -88,9 +73,7 @@ def submit_picture():
     if not picURL:
         return "No picture URL provided!"
     
-    # TODO: use LLM for the task
-    msg = processPicture(picURL)
-    return msg # TODO: return the indices for squares to tick. 
+    return processPicture(picURL)
 
 
 if __name__ == "__main__":
