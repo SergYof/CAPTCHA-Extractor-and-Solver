@@ -14,7 +14,7 @@ and then gets the list of all the images in the iframe, and extracts the needed 
         console.log(`CAPTCHA image URL: ${url}`);
 
         const encoded_url = encodeURIComponent(url); // encode the URL as a component so there will be no symbols like & = ?
-        const response = await fetch(`http://localhost:5000/submit_picture?picURL=${encoded_url}&isSpecial3x3=${isSpecial3x3}`);
+        const response = await fetch(`https://localhost:5000/submit_picture?picURL=${encoded_url}&isSpecial3x3=${isSpecial3x3}`);
         if (!response.ok) {
             throw new Error(`Request failed! Response status code: ${response.status}`);
         }
