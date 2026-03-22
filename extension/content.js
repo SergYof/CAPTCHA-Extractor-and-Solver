@@ -4,19 +4,7 @@ It recognizes the type of CAPTCHA on the page (dynamic / static tiles),
 and then gets the list of all the images in the iframe, and extracts the needed ones.
 */
 
-(() => {
-    if (window == window.top) {
-        console.log("Content script not in an iframe!");
-        return; // ensures the function runs only in an iframe
-    }
-    if (!document.URL.startsWith("https://google.com/recaptcha/api")) {
-        console.log("Script not on reCAPTCHA page!");
-        return; // ensures the function runs only in reCAPTCHA pages
-    }
-
-    // start execution
-    console.log("Starting CAPTCHA Image Extractor...");
-
+function extractImage() {    
     // פונקציית עזר להורדת קבצים למחשב
     const sendToServer = async (url, isSpecial3x3) => { 
         // TODO: it would be nice to trasfer the instruction text too, with the request.
@@ -40,6 +28,9 @@ and then gets the list of all the images in the iframe, and extracts the needed 
         );
         console.log("URL sent to the extension backend!");
     };
+
+    // start execution
+    console.log("Starting CAPTCHA Image Extractor...");
 
     // 1. חילוץ פרטי האתגר והתמונה הראשית [cite: 258-265]
     const descriptionsContainer = document.querySelector('div.rc-imageselect-desc, div.rc-imageselect-desc-no-canonical');
@@ -86,4 +77,27 @@ and then gets the list of all the images in the iframe, and extracts the needed 
             observer.observe(img, { attributes: true, attributeFilter: ['src'] });
         });
     }
+}
+
+(() => {
+    if (window == window.top) {
+        console.log("Content script not in an iframe!");
+        return; // ensures the function runs only in an iframe
+    }
+    if (!document.URL.startsWith("https://www.google.com/recaptcha/api")) {
+        console.log("Script not on reCAPTCHA page!");
+        return; // ensures the function runs only in reCAPTCHA pages
+    }
+
+    // wait for the CAPTCHA picture to load
+    // that's the case only when that CAPTCHA window is opened
+    console.log("Waiting for CAPTCHA image...");
+    new MutationObserver(() => {
+        const images = document.getElementsByTagName("img");
+        if(images.length != 0) {
+            // if there are images detected after a change
+            console.log("Image added!");
+            extractImage();
+        }
+    }).observe(document.getRootNode(), {childList: true, subtree: true}); // monitor the entire document because why not
 }) ();
