@@ -84,20 +84,20 @@ function extractImage() {
         console.log("Content script not in an iframe!");
         return; // ensures the function runs only in an iframe
     }
-    if (!document.URL.startsWith("https://www.google.com/recaptcha/api")) {
-        console.log("Script not on reCAPTCHA page!");
+    if (location.pathname !== "/recaptcha/api2/bframe") {
+        console.log("Script not on reCAPTCHA bframe page!");
         return; // ensures the function runs only in reCAPTCHA pages
     }
 
     // wait for the CAPTCHA picture to load
     // that's the case only when that CAPTCHA window is opened
     console.log("Waiting for CAPTCHA image...");
-    new MutationObserver(() => {
+    new MutationObserver((_, obs) => {
         const images = document.getElementsByTagName("img");
-        if(images.length != 0) {
-            // if there are images detected after a change
+        if(images.length != 0) { // if there are images detected after a change
             console.log("Image added!");
-            extractImage();
+            obs.disconnect(); // The MutationObserver works only one time
+            extractImage(); // TODO: (if the previous line is removed) in case of fading tiles, this MutationObserver may trigger when it shouldn't
         }
     }).observe(document.getRootNode(), {childList: true, subtree: true}); // monitor the entire document because why not
 }) ();
