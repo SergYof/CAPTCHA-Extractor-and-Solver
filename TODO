@@ -1,6 +1,6 @@
 # TODO
-* Get all the CORS stuff working! (more headers, maybe?)
 * Add operating instructions to README
 * Add mkcert install instructions to README
 * Add a "password" header so no other program or website may access the exposed API.
 * Add code to cut image with a 3x3 grid into different files to feed them into LLM.
+* Remove scripts/ folder when it is no longer needed.
