@@ -5,6 +5,16 @@ and then gets the list of all the images in the iframe, and extracts the needed 
 */
 
 (() => {
+    if (window == window.top) {
+        console.log("Content script not in an iframe!");
+        return; // ensures the function runs only in an iframe
+    }
+    if (!document.URL.startsWith("https://google.com/recaptcha/api")) {
+        console.log("Script not on reCAPTCHA page!");
+        return; // ensures the function runs only in reCAPTCHA pages
+    }
+
+    // start execution
     console.log("Starting CAPTCHA Image Extractor...");
 
     // פונקציית עזר להורדת קבצים למחשב
@@ -19,22 +29,16 @@ and then gets the list of all the images in the iframe, and extracts the needed 
         chrome.runtime.sendMessage(
           // message body
           {
-            type: "",
+            type: "SUBMIT_PICTURE",
             picURL: encoded_url,
-
+            isSpecial3x3: isSpecial3x3,
           },
           // callback
           (response) => {
             console.log("Server says:", response);
           }
         );
-        const response = await fetch(`https://localhost:5000/submit_picture?picURL=${encoded_url}&isSpecial3x3=${isSpecial3x3}`);
-        if (!response.ok) {
-            throw new Error(`Request failed! Response status code: ${response.status}`);
-        }
-        alert("Success sending data to the server!");
-        const data = await response.json();
-        console.log(data);
+        console.log("URL sent to the extension backend!");
     };
 
     // 1. חילוץ פרטי האתגר והתמונה הראשית [cite: 258-265]
@@ -45,7 +49,7 @@ and then gets the list of all the images in the iframe, and extracts the needed 
     const mainImageUrl = document.getElementsByTagName('img')[0].src;
     
     console.log("Main Challenge Image Found. Checking for the challenge type...");
-    console.log(`Instruction text detected: ${instructionText}`); // EDITED BY ME
+    console.log(`Instruction text detected: ${instructionText}`); // TODO: send it together with the URL
     
     // 2. זיהוי האם מדובר באתגר עם תמונות מתחלפות (Fading) [cite: 268-274]
     const isSpecial3x3 = descriptionsContainer && descriptionsContainer.childNodes.length === 3;
