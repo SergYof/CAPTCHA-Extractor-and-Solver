@@ -9,7 +9,7 @@ async function handleSubmit(msg, sendResponse) {
     const response = await fetch(`https://127.0.0.1:5000/submit_picture?picURL=${encoded_url}&isSpecial3x3=${msg.isSpecial3x3}`);
     
     console.log("Sending response...");
-    sendResponse(await response.json());
+    sendResponse(await response.text()); // for now, response.text() works out. Better to make a JSON response later.
   } catch(e) {
     console.error(e.toString());
     sendResponse({error: "Extension backend error!"})
