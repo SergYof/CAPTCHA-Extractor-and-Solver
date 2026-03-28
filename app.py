@@ -3,6 +3,7 @@ import os
 import requests
 from dotenv import load_dotenv
 from processPicture import processPicture
+from enableCORS import cors_enabled
 
 
 load_dotenv()
@@ -63,6 +64,7 @@ def submit():
 
 
 @app.route("/submit_picture", methods=["GET"])
+@cors_enabled
 def submit_picture():
     """
     Used to submit the picture extracted by the injected script.
