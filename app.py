@@ -69,7 +69,7 @@ def submit_picture():
     Returns the numbers (indices) of tiles to check.
     """
 
-    picURL = request.args.get("picURL", None)   # get the URL supplied by the GET request
+    picURL = request.args.get("picURL", None)   # get the picture URL supplied by the GET request
     if not picURL:
         return "No picture URL provided!"
     
@@ -77,5 +77,4 @@ def submit_picture():
 
 
 if __name__ == "__main__":
-    # TODO: the browser will complain that the certificate is invalid, better replace it with a real one
     app.run(debug=True, ssl_context=("certs/localhost+2.pem", "certs/localhost+2-key.pem")) 
