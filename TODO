@@ -1,5 +1,4 @@
 # TODO
-* Add operating instructions to README
-* Add mkcert install instructions to README
-* Add a "password" header so no other program or website may access the exposed API.
-* Add code to cut image with a 3x3 grid into different files to feed them into LLM.
+* Feed the cut tiles into a computer vision API
+* Extract the CAPTCHA instruction text and send it alongside the pictures
+* Create a database on the Flask server, to store user logins
