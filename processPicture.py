@@ -1,37 +1,28 @@
 import requests
 import os
 from urllib import parse
+from socketServer.client import create_client_ms
 
 
-def processPicture(picURL: str) -> str:
-    # TODO: return a list of indices to check.
-     
-    # result string
-    msg: str
-    
-    # decoding the URL supplied in a GET request
-    picURL = parse.unquote(picURL)
+def processPicture(picURL: str) -> bytes | None:
 
-    # download the picture with the given URL
-    response = requests.get(picURL)
+    picURL = parse.unquote(picURL) # decode the URL supplied in a GET request
+    response = requests.get(picURL) # download the picture with the given URL
     
     # check for HTTPError
     if response.status_code != 200:
-        msg = f"An error occured downloading the picture. Response code: {response.status_code}"
-        print(msg)
-        return msg
+        print(f"An error occured downloading the picture. Response code: {response.status_code}")
+        return None
 
     # make a downloads folder if it's not there
     if not os.path.exists("./downloads"):
         os.mkdir("./downloads")
     
-    # write the picture into the file
-    with open("./downloads/CAPTCHA.jpg", "wb") as picFile:
-        picFile.write(response.content)
-        msg = "Picture downloaded successfully!"
+    with create_client_ms() as client: 
+        client.send(response.content) # send the binary picture over sockets
+        print("Picture sent successfully!")
+        print("Awaiting response...")
+        solution: bytes = client.receive()
     
-    # TODO: feed the picture into LLM and get the LLM response about what to tick
-    
-    # TODO: return a JSON-formatted response
-    print(msg)
-    return msg
+    print("Solution received (raw bytes): " + solution.hex())
+    return solution
