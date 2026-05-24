@@ -1,5 +1,5 @@
 from socket import socket, AF_INET, SOCK_STREAM
-from protocol import MessageSocket, PORT
+from .protocol import MessageSocket, PORT
 
 
 def create_client_ms() -> MessageSocket:
