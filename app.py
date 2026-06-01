@@ -50,18 +50,17 @@ def index():
 def submit():
     token = request.form.get("g-recaptcha-response", "")
     if not token:
-        flash("נא להשלים CAPTCHA.", "error")
+        flash("Please complete CAPTCHA.", "error")
         return redirect(url_for("index"))
 
     try:
         ok, result = verify_recaptcha(token, remoteip=request.remote_addr)
     except requests.RequestException as e:
-        flash(f"שגיאת תקשורת מול Google: {e}", "error")
+        flash(f"Communication error with Google: {e}.", "error")
         return redirect(url_for("index"))
 
     if not ok:
-        # תוכל להדפיס/ללוג את result כדי לראות error-codes
-        flash(f"CAPTCHA נכשל. קוד: {result.get('error-codes')}", "error")
+        flash(f"CAPTCHA failed. Code: {result.get('error-codes')}", "error")
         return redirect(url_for("index"))
 
     return render_template("success.html", result=result)
