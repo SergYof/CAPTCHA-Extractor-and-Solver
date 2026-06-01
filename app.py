@@ -4,11 +4,15 @@ import requests
 from dotenv import load_dotenv
 from processPicture import processPicture
 from enableCORS import cors_enabled
+from auth.routes import auth_bp
+from admin.routes import admin_bp
 
 
 load_dotenv()
 
 app = Flask(__name__)
+app.register_blueprint(auth_bp)
+app.register_blueprint(admin_bp)
 app.secret_key = os.environ.get("FLASK_SECRET_KEY", "dev-secret-key")
 
 RECAPTCHA_SITE_KEY = os.environ.get("RECAPTCHA_SITE_KEY", "")
@@ -75,7 +79,8 @@ def submit_picture():
     if not picURL:
         return "No picture URL provided!"
     
-    return processPicture(picURL)
+    result = processPicture(picURL)
+    return result if result else "No response :("
 
 
 if __name__ == "__main__":
