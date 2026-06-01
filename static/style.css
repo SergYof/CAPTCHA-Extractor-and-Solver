@@ -13,8 +13,8 @@ body {
     height: 100vh;
 }
 
-/* Login box */
-.login-container {
+/* Login or register box */
+.container {
     background-color: white;
 
     padding: 2rem;
@@ -27,13 +27,13 @@ body {
 }
 
 /* Heading */
-.login-container h1 {
+.container h1 {
     text-align: center;
     margin-bottom: 1.5rem;
 }
 
 /* Inputs */
-.login-container input {
+.container input {
     width: 100%;
 
     padding: 10px;
@@ -46,7 +46,7 @@ body {
 }
 
 /* Button */
-.login-container button {
+.container button {
     width: 100%;
 
     padding: 10px;
@@ -61,6 +61,6 @@ body {
     font-size: 1rem;
 }
 
-.login-container button:hover {
+.container button:hover {
     background-color: #0056b3;
 }
