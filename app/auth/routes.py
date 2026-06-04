@@ -1,4 +1,5 @@
-from flask import Blueprint, request, render_template, flash, redirect, url_for
+import os
+from flask import Blueprint, request, render_template, flash, redirect, url_for, current_app
 from flask_login import login_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
@@ -38,11 +39,15 @@ def register():
         username=username,
         password_hash=generate_password_hash(password),
     )
+    
     db.session.add(user)
     db.session.flush() # required in order to receive user ID
 
-    filename = f"user{user.id}{extension}"
-    document.save(filename)
+    upload_folder = os.path.join(current_app.instance_path, "uploads")
+    os.makedirs(upload_folder, exist_ok=True)
+    filename = f"user_{user.id}{extension}"
+    document.save(os.path.join(upload_folder, filename))
+
     user.document_filename = filename
     
     db.session.commit()
