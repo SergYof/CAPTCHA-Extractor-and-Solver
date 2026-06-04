@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+</head>
+<body>
+
+    <header class="header">
+        <h1>Admin Dashboard</h1>
+
+        <div class="user-info">
+            Logged in as <strong>{{ current_user.username }}</strong>
+            <a href="{{ url_for('auth.logout') }}">Logout</a>
+        </div>
+    </header>
+
+    <main class="container">
+
+        <section class="stats">
+            <div class="card">
+                <h2>{{ requests|length }}</h2>
+                <p>Pending Requests</p>
+            </div>
+        </section>
+
+        <section class="requests-section">
+            <h2>Pending Verification Requests</h2>
+
+            <table class="requests-table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>User</th>
+                        <th>Submitted</th>
+                        <th>Image</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for request in requests %}
+                    <tr>
+                        <td>{{ request.id }}</td>
+                        <td>{{ request.username }}</td>
+                        <td>{{ request.created_at }}</td>
+
+                        <td>
+                            <a href="{{ url_for('static',
+                                    filename='uploads/' + request.image_filename) }}"
+                               target="_blank">
+                                View Image
+                            </a>
+                        </td>
+
+                        <td class="actions">
+                            <form method="POST"
+                                  action="{{ url_for('admin.approve_request',
+                                                     request_id=request.id) }}">
+                                <button class="approve-btn">
+                                    Approve
+                                </button>
+                            </form>
+
+                            <form method="POST"
+                                  action="{{ url_for('admin.reject_request',
+                                                     request_id=request.id) }}">
+                                <button class="reject-btn">
+                                    Reject
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% else %}
+                    <tr>
+                        <td colspan="5" class="empty">
+                            No pending requests.
+                        </td>
+                    </tr>
+                    {% endfor %}
+
+                </tbody>
+            </table>
+        </section>
+
+    </main>
+
+</body>
+</html>
