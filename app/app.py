@@ -42,7 +42,7 @@ def verify_recaptcha(token: str, remoteip: str | None = None) -> tuple[bool, dic
 @app.route("/", methods=["GET"])
 def index():
     if not RECAPTCHA_SITE_KEY or not RECAPTCHA_SECRET_KEY:
-        flash("חסרים מפתחות reCAPTCHA. בדוק את קובץ .env", "error")
+        flash("reCAPTCHA keys not found. Please check the .env file.", "error")
     return render_template("index.html", site_key=RECAPTCHA_SITE_KEY)
 
 
