@@ -13,3 +13,9 @@ class User(db.Model):
         db.String(20),
         default="pending"
     )
+
+
+    def __init__(self, username, password_hash, document_filename=None):
+        self.username = username
+        self.password_hash = password_hash
+        self.document_filename = document_filename

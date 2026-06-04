@@ -1,4 +1,5 @@
 # TODO
 * Feed the cut tiles into a computer vision API
 * Extract the CAPTCHA instruction text and send it alongside the pictures
-* Create a database on the Flask server, to store user logins
+* Create a separate CSS for flashes
+* Add password field in the registration form
