@@ -1,7 +1,7 @@
 import requests
 import os
 from urllib import parse
-from socketServer.client import create_client_ms
+from socketServer import create_client_ms
 
 
 def processPicture(picURL: str) -> bytes | None:

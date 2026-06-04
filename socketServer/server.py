@@ -1,5 +1,5 @@
 from socket import socket, timeout, AF_INET, SOCK_STREAM
-from protocol import MessageSocket, PORT
+from .protocol import MessageSocket, PORT
 from threading import Thread, Lock
 from PIL import Image
 from io import BytesIO

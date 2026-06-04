@@ -2,10 +2,10 @@ from flask import Flask, render_template, request, redirect, url_for, flash
 import os
 import requests
 from dotenv import load_dotenv
-from processPicture import processPicture
-from enableCORS import cors_enabled
-from auth.routes import auth_bp
-from admin.routes import admin_bp
+from app.scripts.processPicture import processPicture
+from app.scripts.enableCORS import cors_enabled
+from app.auth.routes import auth_bp
+from app.admin.routes import admin_bp
 
 
 load_dotenv()
