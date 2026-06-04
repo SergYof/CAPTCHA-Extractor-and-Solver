@@ -1,0 +1,5 @@
+/* Pretty display of Flask flashes */
+
+.flash { padding: 10px; border-radius: 8px; margin-bottom: 12px; }
+.flash.error { background: #ffe1e1; }
+.flash.ok { background: #dff7df; }

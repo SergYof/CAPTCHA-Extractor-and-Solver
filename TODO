@@ -1,6 +1,4 @@
 # TODO
 * Feed the cut tiles into a computer vision API
 * Extract the CAPTCHA instruction text and send it alongside the pictures
-* Create a separate CSS for flashes
-* Add get_flashes() into register.html and login.html templates
-* Add password field in the registration form
+* Admin dashboard

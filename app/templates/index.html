@@ -15,10 +15,8 @@
     .row { margin: 12px 0; }
     input { width: 100%; padding: 10px; font-size: 16px; }
     button { width: 100%; padding: 10px; font-size: 16px; cursor: pointer; }
-    .flash { padding: 10px; border-radius: 8px; margin-bottom: 12px; }
-    .flash.error { background: #ffe1e1; }
-    .flash.ok { background: #dff7df; }
   </style>
+  <link rel="stylesheet" href="{{ url_for('static', filename='flashes.css') }}">
 </head>
 <body>
   <div class="box">
