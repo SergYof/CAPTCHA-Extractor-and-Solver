@@ -16,7 +16,7 @@ ALLOWED_UPLOAD_EXTENSIONS = (".pdf", ".jpg", ".png")
 from app.auth import auth_bp
 from app.admin import admin_bp
 from app.testing import testing_bp
-from app.extensions import db
+from app.extensions import db, login_manager
 
 
 blueprints = (
@@ -31,6 +31,7 @@ def create_app():
     app.config["SQLALCHEMY_DATABASE_URI"] = f"sqlite:///{app.instance_path}\\app.db"
     print(app.config["SQLALCHEMY_DATABASE_URI"]) # TODO: remove
     db.init_app(app)
+    login_manager.init_app(app)
     
     for blueprint in blueprints:
         app.register_blueprint(blueprint)

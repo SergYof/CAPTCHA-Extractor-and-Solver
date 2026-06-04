@@ -1,6 +1,8 @@
-from flask import Blueprint, request, render_template, flash
-from werkzeug.security import generate_password_hash
+from flask import Blueprint, request, render_template, flash, redirect, url_for
+from flask_login import login_user
+from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
+from sqlalchemy import select
 from app.models.user import User
 from app.extensions import db
 from app import ALLOWED_UPLOAD_EXTENSIONS
@@ -54,5 +56,21 @@ def login():
     if request.method == "GET":
         return render_template("login.html")
 
-    # TODO: login logic with Flask-Login
-    return render_template("login.html")
+    username = request.form.get("username")
+    password = request.form.get("password")
+
+    if not (username and password):
+        flash("One or more of the fields are empty.", "Error")
+        return render_template("login.html")
+    
+    user = db.session.scalar(
+        select(User).where(User.username == username)
+    )
+
+    if user and check_password_hash(user.password_hash, password):
+        login_user(user)
+        flash("Successfully loggged in!", "ok")
+        return redirect(url_for("testing.captcha_form"))
+    else:
+        flash("Non-existent user or incorrect password.", "error")
+        return render_template("login.html")
