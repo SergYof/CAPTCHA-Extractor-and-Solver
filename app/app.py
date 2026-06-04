@@ -4,8 +4,8 @@ import requests
 from dotenv import load_dotenv
 from app.scripts.processPicture import processPicture
 from app.scripts.enableCORS import cors_enabled
-from app.auth.routes import auth_bp
-from app.admin.routes import admin_bp
+from app.auth import auth_bp
+from app.admin import admin_bp
 
 
 load_dotenv()
