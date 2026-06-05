@@ -1,6 +1,6 @@
 import os
 from flask import Blueprint, request, render_template, flash, redirect, url_for, current_app
-from flask_login import login_user
+from flask_login import login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
 from sqlalchemy import select
@@ -79,3 +79,9 @@ def login():
     else:
         flash("Non-existent user or incorrect password.", "error")
         return render_template("login.html")
+
+
+@auth_bp.route("/logout")
+def logout():
+    logout_user()
+    return redirect(url_for("login"))

@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Admin Dashboard</title>
 
-    <link rel="stylesheet" href="{{ url_for('static', filename='admin.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='admin_dashboard.css') }}">
 </head>
 <body>
 
@@ -36,7 +36,7 @@
                         <th>ID</th>
                         <th>User</th>
                         <th>Submitted</th>
-                        <th>Image</th>
+                        <th>Document</th>
                         <th>Actions</th>
                     </tr>
                 </thead>
@@ -50,17 +50,16 @@
                         <td>{{ request.created_at }}</td>
 
                         <td>
-                            <a href="{{ url_for('static',
-                                    filename='uploads/' + request.image_filename) }}"
+                            <a href="{{ url_for('admin.view_document', user_id = request.id) }}"
                                target="_blank">
-                                View Image
+                                View Document
                             </a>
                         </td>
 
                         <td class="actions">
                             <form method="POST"
                                   action="{{ url_for('admin.approve_request',
-                                                     request_id=request.id) }}">
+                                                     user_id=request.id) }}">
                                 <button class="approve-btn">
                                     Approve
                                 </button>
@@ -68,7 +67,7 @@
 
                             <form method="POST"
                                   action="{{ url_for('admin.reject_request',
-                                                     request_id=request.id) }}">
+                                                     user_id=request.id) }}">
                                 <button class="reject-btn">
                                     Reject
                                 </button>
