@@ -6,11 +6,12 @@ async function handleSubmit(msg, sendResponse) {
     
     // encode the picture URL so there are no symbols like &=/?: since they would break the outer URL
     const encoded_url = encodeURIComponent(msg.picURL); 
-    
+    const encoded_instructions = encodeURIComponent(msg.instructionText);
+
     console.log("Fetching response...");
     const response = await fetch(
       "https://127.0.0.1:5000/submit_picture" +
-      `?instructionText=${instructionText}` +
+      `?instructionText=${encoded_instructions}` +
       `&picURL=${encoded_url}` +
       `&isSpecial3x3=${msg.isSpecial3x3}`
     );

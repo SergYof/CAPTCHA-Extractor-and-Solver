@@ -15,7 +15,7 @@ function extractImage() {
           {
             type: "SUBMIT_PICTURE",
             instructionText: instructionText,
-            picURL: JSON.stringify(url), // escape any character that needs escaping
+            picURL: url,
             isSpecial3x3: isSpecial3x3,
           },
           // callback
