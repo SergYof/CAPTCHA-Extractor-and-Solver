@@ -3,18 +3,11 @@
 <head>
     <title>Create Account</title>
 
-    <link rel="stylesheet"
-          href="{{ url_for('static', filename='forms.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='forms.css') }}">
     <link rel="stylesheet" href="{{ url_for('static', filename='flashes.css') }}">
 </head>
 <body>
-{% with messages = get_flashed_messages(with_categories=true) %}
-{% if messages %}
-    {% for category, msg in messages %}
-    <div class="flash {{ category }}">{{ msg }}</div>
-    {% endfor %}
-{% endif %}
-{% endwith %}
+{% include "_flash_messages.html" %}
 
 <div class="container">
     <h1>Create Account</h1>

@@ -20,15 +20,9 @@
 </head>
 <body>
   <div class="box">
-    <h2>טופס לדוגמה</h2>
+    {% include "_flash_messages.html" %}
 
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        {% for category, msg in messages %}
-          <div class="flash {{ category }}">{{ msg }}</div>
-        {% endfor %}
-      {% endif %}
-    {% endwith %}
+    <h2>טופס לדוגמה</h2>
 
     <form method="post" action="{{ url_for('testing.submit') }}">
       <div class="row">
