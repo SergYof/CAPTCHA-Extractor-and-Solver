@@ -6,19 +6,16 @@ and then gets the list of all the images in the iframe, and extracts the needed 
 
 function extractImage() {    
     // פונקציית עזר להורדת קבצים למחשב
-    const sendToServer = async (url, isSpecial3x3) => { 
-        // TODO: it would be nice to trasfer the instruction text too, with the request.
-
+    const sendToServer = async (instructionText, url, isSpecial3x3) => { 
         console.log(`CAPTCHA image URL: ${url}`);
 
-        const encoded_url = encodeURIComponent(url); // encode the URL as a component so there will be no symbols like & = ?
-        
         // Send request to extension backend
         chrome.runtime.sendMessage(
           // message body
           {
             type: "SUBMIT_PICTURE",
-            picURL: encoded_url,
+            instructionText: instructionText,
+            picURL: JSON.stringify(url), // escape any character that needs escaping
             isSpecial3x3: isSpecial3x3,
           },
           // callback
@@ -32,45 +29,43 @@ function extractImage() {
     // start execution
     console.log("Starting CAPTCHA Image Extractor...");
 
-    // 1. חילוץ פרטי האתגר והתמונה הראשית [cite: 258-265]
+    // extract CAPTCHA container div and instruction text
     const descriptionsContainer = document.querySelector('div.rc-imageselect-desc, div.rc-imageselect-desc-no-canonical');
     const instructionText = descriptionsContainer ? descriptionsContainer.innerText.replace(/\s+/g, '_') : "captcha_image";
     
-    // השגת ה-URL של תמונת האתגר הראשית (ה-Sprite) [cite: 264]
+    // extract CAPTCHA main image url 
     const mainImageUrl = document.getElementsByTagName('img')[0].src;
     
     console.log("Main Challenge Image Found. Checking for the challenge type...");
     console.log(`Instruction text detected: ${instructionText}`); // TODO: send it together with the URL
     
-    // 2. זיהוי האם מדובר באתגר עם תמונות מתחלפות (Fading) [cite: 268-274]
+    // fading tiles CAPTCHA identification
     const isSpecial3x3 = descriptionsContainer && descriptionsContainer.childNodes.length === 3;
-    if (isSpecial3x3) {
-        console.log("Detected: Special 3x3 with fading tiles.");
-    } else {
-        console.log("Detected: Static grid (No fading expected)."); 
-    }
-    console.log("Sending the URL to the server...");
-    sendToServer(mainImageUrl, isSpecial3x3);
+
+    console.log( isSpecial3x3 ? 
+        "Detected: Special 3x3 with fading tiles." : 
+        "Detected: Static grid (No fading expected)."
+    );
     
+    console.log("Sending the main image URL to the server...");
+    sendToServer(instructionText, mainImageUrl, isSpecial3x3);
 
     if (isSpecial3x3) {
         console.log("Monitoring dynamic grid for changes..."); 
-        // [cite: 356]
         
-        // 3. מנגנון מעקב אחרי תמונות מתחלפות [cite: 388-389]
-        // הקוד מאזין לשינויים ב-src של כל תגיות ה-img ב-iframe
+        // A mechanism to observe changes in the src property of images
         const images = document.querySelectorAll('.rc-image-tile-wrapper img');
         
         images.forEach((img, index) => {
             let lastSrc = img.src;
             
-            // שימוש ב-MutationObserver כדי לזהות שינוי ב-Attribute של ה-src
+            // Using MutationObserver in order to identify changes in src attrbute
             const observer = new MutationObserver(() => {
                 if (img.src !== lastSrc) {
                     console.log(`Tile ${index} changed! Downloading new tile...`); 
-                    // [cite: 372]
+                    
                     lastSrc = img.src;
-                    sendToServer(img.src, true); // this can only happen in dynamic grid
+                    sendToServer(instructionText, img.src, true); // this can only happen in dynamic grid
                 }
             });
 
