@@ -1,4 +1,4 @@
-from flask import Blueprint, request
+from flask import Blueprint, request, jsonify
 from app.scripts import cors_enabled, processPicture
 
 
@@ -12,10 +12,5 @@ def submit_picture():
     Used to submit the picture extracted by the injected script.
     Returns the numbers (indices) of tiles to check.
     """
-
-    picURL = request.args.get("picURL", None)   # get the picture URL supplied by the GET request
-    if not picURL:
-        return "No picture URL provided!"
     
-    result = processPicture(picURL)
-    return result if result else "No response :("
+    return jsonify(processPicture(request.args))

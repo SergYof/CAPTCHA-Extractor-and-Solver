@@ -1,10 +1,19 @@
 import requests
-import os
 from urllib import parse
 from socketServer import create_client_ms
 
 
-def processPicture(picURL: str) -> bytes | None:
+def processPicture(arguments: dict[str, str]) -> dict[str, str | None]:
+    """
+    Processes a sent picture and instruction text, sending it over to the socket server.
+    Returns a dictionary of socket server's response or error.
+    """
+
+    instructionText = arguments.get("instructionText")
+    picURL = arguments.get("picURL")
+    
+    if not(instructionText and picURL):
+        return {"response": None, "error": "Malformed API request"}
 
     picURL = parse.unquote(picURL) # decode the URL supplied in a GET request
     response = requests.get(picURL) # download the picture with the given URL
@@ -12,17 +21,16 @@ def processPicture(picURL: str) -> bytes | None:
     # check for HTTPError
     if response.status_code != 200:
         print(f"An error occured downloading the picture. Response code: {response.status_code}")
-        return None
+        return {"response": None, "error": "Error downloading the picture"}
 
-    # make a downloads folder if it's not there
-    if not os.path.exists("./downloads"):
-        os.mkdir("./downloads")
     
     with create_client_ms() as client: 
-        client.send(response.content) # send the binary picture over sockets
+        # send the instruction text and binary picture over sockets
+        client.send(instructionText, response.content) 
         print("Picture sent successfully!")
+
         print("Awaiting response...")
-        solution: bytes = client.receive()
+        solution = str(client.receive())
     
-    print("Solution received (raw bytes): " + solution.hex())
-    return solution
+    print("Solution received: " + solution)
+    return {"response": solution, "error": None}
