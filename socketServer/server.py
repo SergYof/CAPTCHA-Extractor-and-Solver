@@ -6,7 +6,6 @@ from io import BytesIO
 
 
 client_ms: MessageSocket
-socket_lock = Lock()    # avoid simultaneous sending of information through a socket
 
 
 def create_listening_socket() -> socket:
@@ -25,7 +24,7 @@ def accept_client_ms(server_sock: socket) -> MessageSocket:
 def cut_picture(image: bytes) -> list[Image.Image]:
     img = Image.open(BytesIO(image))    # this avoids saving image to a file and uses an in-memory buffer
     width, height = img.size
-    
+    print(f"Image size is {img.size}")
     # challenge images are usually 300 by 300 px, so it divides nicely
     cell_w = width // 3
     cell_h = height // 3
@@ -45,22 +44,21 @@ def cut_picture(image: bytes) -> list[Image.Image]:
     return pieces
 
 
-def thread_body(image_stream: bytes) -> None:
-    tiles = cut_picture(image_stream) 
+def thread_body(instruction_text: str, image_stream: bytes) -> None:
+    tiles = cut_picture(image_stream)
 
     # if this runs, the test has passed
+    print(f"The instruction text is: {instruction_text}")
     print(f"The size of the first tile is: {tiles[0].size}")
-    tiles[0].show("IT WORKS!")
+    tiles[0].show()
 
     # TODO call Object Recognition API
     # with the list of retrieved pictures
+    # and the instruction text provided
     # and ask it to recognize the objects requested
 
-    response = b"Socket Server Thread: the picture was received successfully!"
-    with socket_lock:
-        client_ms.send(response) # reroute the API response to the Flask server
-    
-    return
+    response = "Socket Server Thread: the picture was received successfully!"
+    client_ms.send(response, b"") # reroute the API response to the Flask server
 
 
 def main() -> None:
@@ -72,17 +70,19 @@ def main() -> None:
         while True:
             try:
                 if not listen_printed:
-                    listen_printed = True
                     print("Listening")
+                
+                listen_printed = True
+                
                 
                 global client_ms
                 client_ms = accept_client_ms(server_sock)
-                
                 print("Connection established")
-                picture_bytes = client_ms.receive()
+
+                instruction_text, picture_bytes = client_ms.receive()
                 print("Data received")
                 
-                Thread(target=thread_body, args = (picture_bytes,)).run()
+                Thread(target=thread_body, args = (instruction_text, picture_bytes)).run()
                 
                 listen_printed = False
             except timeout:
