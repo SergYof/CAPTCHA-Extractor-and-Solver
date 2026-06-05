@@ -16,6 +16,7 @@ ALLOWED_UPLOAD_EXTENSIONS = (".pdf", ".jpg", ".png")
 from app.auth import auth_bp
 from app.admin import admin_bp
 from app.testing import testing_bp
+from app.uploader import uploader_bp
 from app.extensions import db, login_manager
 
 
@@ -23,6 +24,7 @@ blueprints = (
     auth_bp,
     admin_bp,
     testing_bp,
+    uploader_bp,
 )
 
 
