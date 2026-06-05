@@ -4,7 +4,7 @@ from sqlalchemy import select, update
 from pathlib import Path
 from app.models import User
 from app.extensions import db
-from .scripts import admin_required
+from .scripts import admin_required, remove_user_document
 
 admin_bp = Blueprint("admin", __name__)
 
@@ -49,6 +49,9 @@ def approve_request():
     if user:
         user.status = "approved"
         db.session.commit()
+
+        remove_user_document(user)
+
         flash(f"User {user.username} (ID {user_id}) approved.", "ok")
     else:
         flash(f"Error approving user {user_id}: user not found.", "error")
@@ -68,6 +71,9 @@ def reject_request():
     if user:
         user.status = "rejected"
         db.session.commit()
+
+        remove_user_document(user)
+
         flash(f"User {user.username} (ID {user_id}) rejected.", "ok")
     else:
         flash(f"Error rejecting user {user_id}: user not found.", "error")
