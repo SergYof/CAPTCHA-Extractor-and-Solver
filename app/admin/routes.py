@@ -48,9 +48,11 @@ def approve_request():
 
     if user:
         user.status = "approved"
-        db.session.commit()
 
         remove_user_document(user)
+
+        user.document_filename = None
+        db.session.commit()
 
         flash(f"User {user.username} (ID {user_id}) approved.", "ok")
     else:
@@ -70,9 +72,9 @@ def reject_request():
 
     if user:
         user.status = "rejected"
-        db.session.commit()
 
         remove_user_document(user)
+        db.session.commit()
 
         flash(f"User {user.username} (ID {user_id}) rejected.", "ok")
     else:

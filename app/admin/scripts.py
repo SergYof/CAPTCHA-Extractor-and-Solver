@@ -23,5 +23,3 @@ def remove_user_document(user):
 
         if filepath.exists():
             filepath.unlink()
-    
-    user.document_filename = None
