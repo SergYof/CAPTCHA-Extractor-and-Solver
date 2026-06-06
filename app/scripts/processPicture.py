@@ -30,7 +30,7 @@ def processPicture(arguments: dict[str, str]) -> dict[str, str | None]:
         print("Picture sent successfully!")
 
         print("Awaiting response...")
-        solution = str(client.receive())
+        solution = client.receive()[0] # receive only text - nothing useful in bytes
     
     print("Solution received: " + solution)
     return {"response": solution, "error": None}
