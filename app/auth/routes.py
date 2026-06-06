@@ -4,6 +4,7 @@ from flask_login import login_user, logout_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from pathlib import Path
 from sqlalchemy import select
+from email_validator import validate_email, EmailNotValidError
 from app.models.user import User
 from app.extensions import db
 from app import ALLOWED_UPLOAD_EXTENSIONS
@@ -17,12 +18,19 @@ def register():
         return render_template("register.html")
     
     username = request.form.get("username")
+    email = request.form.get("email")
     password = request.form.get("password")
     document = request.files.get("document")
 
     
-    if not (username and password and document):
+    if not (username and email and password and document):
         flash("One or more of the fields are empty. Please fill in all the fields.", "error")
+        return render_template("register.html")
+
+    try:
+        email = validate_email(email).email
+    except EmailNotValidError:
+        flash("The email provided is invalid.", "error")
         return render_template("register.html")
 
     if not document.filename:
@@ -37,6 +45,7 @@ def register():
 
     user = User(
         username=username,
+        email=email,
         password_hash=generate_password_hash(password),
     )
     
@@ -52,7 +61,7 @@ def register():
     
     db.session.commit()
 
-    flash("Your account was created successfully! We'll take a look at your document, and you're good to go.", "ok")
+    flash("Your account was created successfully! We'll take a look at your document and contact you.", "ok")
     return render_template("register.html")
 
 
