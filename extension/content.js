@@ -1,9 +1,28 @@
  /* This script is intended to be run in the inner context (the CAPTCHA iframe).
 It recognizes the type of CAPTCHA on the page (dynamic / static tiles), then
-gets the list of all the images in the iframe, and extracts the needed ones. */
+gets the list of all the images in the iframe, and extracts the URL addresses
+of needed ones. The addresses are sent to extension backend for processing.
+The response is then processed by clicking the images present in the list, and
+clicking the submit button. */
 
 
-async function parseResponse(response) {
+async function clickTiles(tilesList) {
+    tilesList.forEach((index) => {
+        const td = document.getElementById(index);
+        td.click();
+    });
+    console.log(`Tiles ${tilesList} clicked succesfully`);
+}
+
+
+async function submitCaptcha() {
+    const submitButton = document.getElementById("recaptcha-verify-button");
+    submitButton.click();
+    console.log("Submit button clicked successfully");
+}
+
+
+async function processResponse(response) {
     console.log("Response from server:", response);
 
     if (!("response" in response && "error" in response)) {
@@ -15,17 +34,22 @@ async function parseResponse(response) {
     let error = [];
 
     if (response.response == null)
-        error = ["No response field present in response JSON"]
+        error.push("No response field present in response JSON");
     
     if(response.error != null)
-        error = ["Error in response:", response.error]
+        error.push("Error in response:", response.error);
 
     if (error != []) {
         console.error(...error);
         return;
     }
 
-    // TODO: a function which clicks the tiles with indices provided in the response
+    clickTiles(response.response);
+    // demonstrate the solved CAPTCHA for a second
+    setTimeout(
+        submitCaptcha,
+        1000,
+    );
 }
 
 
@@ -39,7 +63,7 @@ async function sendToServer(instructionText, url, isSpecial3x3) {
             picURL: url,
             isSpecial3x3: isSpecial3x3,
         },
-        parseResponse // callback function
+        processResponse // callback function
     );
 };
 
