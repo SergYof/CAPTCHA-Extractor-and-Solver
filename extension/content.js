@@ -11,7 +11,7 @@ async function clickTiles(tilesList) {
         const td = document.getElementById(index);
         td.click();
     });
-    console.log(`Tiles ${tilesList} clicked succesfully`);
+    console.log(`Tiles ${tilesList.join(", ")} clicked succesfully`);
 }
 
 
