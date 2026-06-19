@@ -1,6 +1,7 @@
 import requests
 from urllib import parse
-from socketServer import create_client_ms
+from socketServer import create_client_conn
+from socketServer.protocol import Message, MessageType
 
 
 def processPicture(arguments: dict[str, str]) -> dict[str, str | None]:
@@ -24,13 +25,14 @@ def processPicture(arguments: dict[str, str]) -> dict[str, str | None]:
         return {"response": None, "error": "Error downloading the picture"}
 
     
-    with create_client_ms() as client: 
+    with create_client_conn() as client: 
         # send the instruction text and binary picture over sockets
-        client.send(instructionText, response.content) 
+        client.send(Message(MessageType.TEXT, instructionText))
+        client.send(Message(MessageType.BINARY, response.content))
         print("Picture sent successfully!")
 
         print("Awaiting response...")
-        solution = client.receive()[0] # receive only text - nothing useful in bytes
+        solution = client.receive().payload
     
     print("Solution received: " + solution)
     return {"response": solution, "error": None}

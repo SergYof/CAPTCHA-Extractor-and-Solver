@@ -1,11 +1,11 @@
 from socket import socket, timeout, AF_INET, SOCK_STREAM
-from .protocol import MessageSocket, PORT
-from threading import Thread, Lock
+from .protocol import SecureConnection, PORT, Message, MessageType
+from threading import Thread
 from PIL import Image
 from io import BytesIO
 
 
-client_ms: MessageSocket
+client_conn: SecureConnection
 
 
 def create_listening_socket() -> socket:
@@ -16,9 +16,9 @@ def create_listening_socket() -> socket:
     return sock
 
 
-def accept_client_ms(server_sock: socket) -> MessageSocket:
+def accept_client_conn(server_sock: socket) -> SecureConnection:
     client_sock, _ = server_sock.accept()
-    return MessageSocket(client_sock)
+    return SecureConnection(client_sock, True)
 
 
 def cut_picture(image: bytes) -> list[Image.Image]:
@@ -58,7 +58,9 @@ def thread_body(instruction_text: str, image_stream: bytes) -> None:
     # and ask it to recognize the objects requested
 
     response = "Socket Server Thread: the picture was received successfully!"
-    client_ms.send(response, b"") # reroute the API response to the Flask server
+    client_conn.send(
+        Message(MessageType.TEXT, response)
+    ) # reroute the API response to the Flask server
 
 
 def main() -> None:
@@ -75,11 +77,12 @@ def main() -> None:
                 listen_printed = True
                 
                 
-                global client_ms
-                client_ms = accept_client_ms(server_sock)
+                global client_conn
+                client_conn = accept_client_conn(server_sock)
                 print("Connection established")
 
-                instruction_text, picture_bytes = client_ms.receive()
+                instruction_text = client_conn.receive().payload
+                picture_bytes = client_conn.receive().payload
                 print("Data received")
                 
                 Thread(target=thread_body, args = (instruction_text, picture_bytes)).run()
