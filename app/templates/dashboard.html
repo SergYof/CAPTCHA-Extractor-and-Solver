@@ -38,7 +38,7 @@
                     <tr>
                         <th>ID</th>
                         <th>User</th>
-                        <th>Submitted</th>
+                        <th>email</th>
                         <th>Document</th>
                         <th>Actions</th>
                     </tr>
@@ -50,7 +50,7 @@
                     <tr>
                         <td>{{ request.id }}</td>
                         <td>{{ request.username }}</td>
-                        <td>{{ request.created_at }}</td>
+                        <td>{{ request.email }}</td>
 
                         <td>
                             <a href="{{ url_for('admin.view_document', user_id = request.id) }}"
