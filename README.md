@@ -2,11 +2,11 @@
 ![Python](https://img.shields.io/badge/Python-3.13.4-green)
 ![Status](https://img.shields.io/badge/Status-in%20progress-yellow)
 <br/>
-A system combining a Chrome extension and a Flask backend, designed to intercept reCAPTCHA v2 challenge iframes, extract their data and (***TBA***) solve the challenges automatically.
+An accessibility system combining a Chrome extension and a Flask backend, designed to intercept reCAPTCHA v2 challenge iframes, extract their data and **(TO NOT BE ADDED)** solve the challenges automatically.
 
 ## Disclaimer
 This project is intended for educational and research purposes only.  
-Automating CAPTCHA solving may violate the terms of service of some websites.
+Automating CAPTCHA solving is not to actually be implemented in the code.
 
 ## Requirements
 - Python 3.13+
@@ -64,14 +64,18 @@ Open `https://localhost:5000` to verify the server is running.
 You can inspect the communication between the extension and the server via the DevTools console (`Ctrl+Shift+I`).
 
 ## System Overview
-The system consists of two complementary parts:
+The system consists of three complementary parts:
 - A Chrome extension that:
   - Injects content scripts into CAPTCHA iframes
   - Detects CAPTCHA type and grid size
   - Sends challenge data to the backend
-  - ***(TBA)*** Receives the response and checks the needed tiles.
-- and a Flask server that:
+  - _Receives a list of tiles as a response_
+  - _Clicks the needed tiles and submits the CAPTCHA_
+- a Flask server that:
   - Downloads the challenge image
-  - ***(TBA)*** Splits the image into tiles
-  - ***(TBA)*** Uses an LLM to determine the correct tiles
-  - ***(TBA)*** Sends back the solution
+  - Sends it to the socket server using specifically designed socket protocol
+  - _Upon receiving response, returns it to the extension_
+- and a socket server that:
+  - Splits the image into tiles in a separate thread
+  - _Queries a remote computer vision API to recognize the objects in the CAPTCHA picture **(NOTE: this part and all the flow starting from this (provided in italic) is not intended to actually work)**_
+  - _Sends the response back_
